@@ -41,7 +41,7 @@
     "@actions/github": "6.0.0"
   },
   "devDependencies": {
-    "@types/node": "20.17.23",
+    "@types/node": "22.13.9",
     "@vercel/ncc": "0.38.3",
     "eslint": "9.21.0",
     "globals": "16.0.0"
