@@ -1,15 +1,11 @@
 const core = require('@actions/core')
 const Github = require('./github')
 const Vercel = require('./vercel')
-const { addSchema } = require('./helpers')
-const crypto = require('crypto')
+const { addSchema, aliasFormatting } = require('./helpers')
 
 const {
 	GITHUB_DEPLOYMENT,
 	USER,
-	REPOSITORY,
-	BRANCH,
-	PR_NUMBER,
 	SHA,
 	IS_PR,
 	PR_LABELS,
@@ -25,9 +21,6 @@ const {
 	ACTOR
 } = require('./config')
 
-// Following https://perishablepress.com/stop-using-unsafe-characters-in-urls/ only allow characters that won't break as a domainname
-const urlSafeParameter = (input) => input.replace(/[^a-z0-9~]/gi, '-')
-
 const run = async () => {
 	const github = Github.init()
 
@@ -37,7 +30,7 @@ const run = async () => {
 		const body = `
 			Refusing to deploy this Pull Request to Vercel because it originates from @${ ACTOR }'s fork.
 
-			**@${ USER }** To allow this behaviour set \`DEPLOY_PR_FROM_FORK\` to true ([more info](https://github.com/mountainash/fork-deploy-to-vercel-action#deploying-a-pr-made-from-a-fork-or-dependabot)).
+			**@${ USER }** To allow this behavior set \`DEPLOY_PR_FROM_FORK\` to true ([more info](https://github.com/mountainash/deploy-to-vercel-action#deploying-a-pr-made-from-a-or-dependabot)).
 		`
 
 		const comment = await github.createComment(body)
@@ -91,11 +84,18 @@ const run = async () => {
 		const vercel = Vercel.init()
 
 		const commit = ATTACH_COMMIT_METADATA ? await github.getCommit() : undefined
-		const deploymentUrl = await vercel.deploy(commit)
+		const uniqueURL = await vercel.deploy(commit)
 
 		core.info('Successfully deployed to Vercel ▲')
 
-		const deploymentUrls = []
+		const deploymentURLs = {
+			unique: addSchema(uniqueURL),
+			preview: '',
+			aliases: [],
+			inspector: '',
+			all: []
+		}
+
 		if (IS_PR && PR_PREVIEW_DOMAIN) {
 			core.info('Assigning custom preview domain to PR 🌐')
 
@@ -103,67 +103,58 @@ const run = async () => {
 				throw new Error('🛑 invalid type for PR_PREVIEW_DOMAIN')
 			}
 
-			const alias = PR_PREVIEW_DOMAIN.replace('{USER}', urlSafeParameter(USER))
-				.replace('{REPO}', urlSafeParameter(REPOSITORY))
-				.replace('{BRANCH}', urlSafeParameter(BRANCH))
-				.replace('{PR}', PR_NUMBER)
-				.replace('{SHA}', SHA.substring(0, 7))
-				.toLowerCase()
+			const previewURL = aliasFormatting(PR_PREVIEW_DOMAIN)
 
-			const previewDomainSuffix = '.vercel.app'
-			let nextAlias = alias
+			await vercel.assignAlias(previewURL)
+			core.info(`Updated domain alias: ${ previewURL }`)
 
-			if (alias.endsWith(previewDomainSuffix)) {
-				let prefix = alias.substring(0, alias.indexOf(previewDomainSuffix))
-
-				if (prefix.length >= 60) {
-					core.warning(`⚠️ The alias ${ prefix } exceeds 60 chars in length, truncating using vercel's rules. See https://vercel.com/docs/concepts/deployments/automatic-urls#automatic-branch-urls`)
-					prefix = prefix.substring(0, 55)
-					const uniqueSuffix = crypto.createHash('sha256')
-						.update(`git-${ BRANCH }-${ REPOSITORY }`)
-						.digest('hex')
-						.slice(0, 6)
-
-					nextAlias = `${ prefix }-${ uniqueSuffix }${ previewDomainSuffix }`
-					core.info(`Updated domain alias: ${ nextAlias }`)
-				}
-			}
-
-			await vercel.assignAlias(nextAlias)
-
-			deploymentUrls.push(addSchema(nextAlias))
+			deploymentURLs.preview = addSchema(previewURL)
 		}
 
 		if (ALIAS_DOMAINS.length) {
 			core.info('Assigning alias domains to deployment 🌐')
+			core.debug(`ALIAS_DOMAINS ${ ALIAS_DOMAINS }`)
 
 			if (!Array.isArray(ALIAS_DOMAINS)) {
 				throw new Error('🛑 ALIAS_DOMAINS should be in array format')
 			}
 
 			for (let i = 0; i < ALIAS_DOMAINS.length; i++) {
-				const alias = ALIAS_DOMAINS[i]
-					.replace('{USER}', urlSafeParameter(USER))
-					.replace('{REPO}', urlSafeParameter(REPOSITORY))
-					.replace('{BRANCH}', urlSafeParameter(BRANCH))
-					.replace('{SHA}', SHA.substring(0, 7))
-					.toLowerCase()
+				let aliasDomain = ALIAS_DOMAINS[i]
+
+				core.debug(`🔎 aliasDomain: ${ aliasDomain } (${ typeof aliasDomain })`)
+
+				// clean string
+				aliasDomain = aliasDomain.trim()
+				aliasDomain = aliasDomain.replace(/['"]+/g, '')
+
+				// check for "falsey" can often be null and empty values
+				if (aliasDomain === '' || aliasDomain.toLowerCase() === 'false' || aliasDomain.toLowerCase() === 'null') {
+					core.info(`Skipping ALIAS domain "${ aliasDomain }" 🌐`)
+					continue
+				}
+
+				const alias = aliasFormatting(aliasDomain)
+				core.debug(`▶️ alias: ${ alias }`)
 
 				await vercel.assignAlias(alias)
 
-				deploymentUrls.push(addSchema(alias))
+				deploymentURLs.aliases.push(addSchema(alias))
 			}
 		}
 
-		deploymentUrls.push(addSchema(deploymentUrl))
-		const previewUrl = deploymentUrls[0]
+		deploymentURLs.all.push(deploymentURLs.unique)
+		deploymentURLs.all.push(deploymentURLs.preview)
+		deploymentURLs.all = deploymentURLs.all.concat(deploymentURLs.aliases)
 
 		const deployment = await vercel.getDeployment()
-		core.info(`Deployment "${ deployment.id }" available at: ${ deploymentUrls.join(', ') }`)
+		deploymentURLs.inspector = deployment.inspectorUrl
+
+		core.info(`Deployment "${ deployment.id }" available at: ${ deploymentURLs.all.join(' ') }`)
 
 		if (GITHUB_DEPLOYMENT) {
 			core.info('Changing GitHub deployment status to "success" ✔︎')
-			await github.updateDeployment('success', previewUrl)
+			await github.updateDeployment('success', deploymentURLs.preview)
 		}
 
 		if (IS_PR) {
@@ -177,65 +168,49 @@ const run = async () => {
 
 			if (CREATE_COMMENT) {
 				core.info('Creating new comment on PR 💬')
-				const body = `
-					This pull request has been deployed to Vercel ▲.
+				let commentMD = `This pull request (commit \`${ SHA.substring(0, 7) }\`) has been deployed to Vercel ▲ - [View GitHub Actions Workflow Logs](${ LOG_URL })
 
-					<table>
-						<tr>
-							<th>Latest Commit</th>
-							<td><code>${ SHA.substring(0, 7) }</code></td>
-						</tr>
-						<tr>
-							<th>👀 Preview</th>
-							<td><a href='${ previewUrl }'>${ previewUrl }</a></td>
-						</tr>
-						<tr>
-							<th>🔍 Inspect</th>
-							<td><a href='${ deployment.inspectorUrl }'>${ deployment.inspectorUrl }</a></td>
-						</tr>
-					</table>
+| Name | Link |
+| :--- | :--- |`
+				commentMD += deploymentURLs.preview ?		`\n| 👀 Preview	| <${ deploymentURLs.preview }> |` : ''
+				commentMD += deploymentURLs.unique ?		`\n| 🌐 Unique 	| <${ deploymentURLs.unique }> |` : ''
+				commentMD += deploymentURLs.inspector ?	`\n| 🔍 Inspect	| <${ deploymentURLs.inspector }> |` : ''
 
-					[View GitHub Actions Workflow Logs](${ LOG_URL })
-				`
-
-				const comment = await github.createComment(body)
+				const comment = await github.createComment(commentMD)
 				core.info(`Comment created: ${ comment.html_url }`)
 			}
 
 			if (PR_LABELS.length) {
-				core.info('Adding label(s) to PR 🏷️')
 				const labels = await github.addLabel()
 
-				core.info(`Label(s) "${ labels.map((label) => label.name).join(', ') }" added`)
+				core.info(`Label(s) "${ labels.map((label) => label.name).join(', ') }" added to PR 🏷️`)
 			}
 		}
 
-		const deploymentUniqueURL = deploymentUrls[deploymentUrls.length - 1]
+		let summaryMD = `## Deploy to Vercel ▲
 
-		core.setOutput('PREVIEW_URL', previewUrl)
-		core.setOutput('DEPLOYMENT_URLS', deploymentUrls)
-		core.setOutput('DEPLOYMENT_UNIQUE_URL', deploymentUniqueURL)
-		core.setOutput('DEPLOYMENT_ID', deployment.id)
-		core.setOutput('DEPLOYMENT_INSPECTOR_URL', deployment.inspectorUrl)
-		core.setOutput('DEPLOYMENT_CREATED', true)
-		core.setOutput('COMMENT_CREATED', IS_PR && CREATE_COMMENT)
-
-		const summaryMD = `## Deploy to Vercel ▲
 | Name | Link |
-| :--- | :--- |
-| 🔍 Inspect	| <${ deployment.inspectorUrl }> |
-| 👀 Preview	| <${ previewUrl }> |
-| 🌐 Unique 	| <${ deploymentUniqueURL }> |
-| 🌐 Others 	| ${ deploymentUrls.join('<br>') } |
-		`
+| :--- | :--- |`
+		summaryMD += deploymentURLs.preview ?					`\n| 👀 Preview	| <${ deploymentURLs.preview }> |` : ''
+		summaryMD += deploymentURLs.unique ?					`\n| 🌐 Unique 	| <${ deploymentURLs.unique }> |` : ''
+		summaryMD += deploymentURLs.aliases.length ?	`\n| 🌐 Others 	| ${ deploymentURLs.aliases.join('<br>') } |` : ''
+		summaryMD += deploymentURLs.inspector ?				`\n| 🔍 Inspect	| <${ deploymentURLs.inspector }> |` : ''
 
 		await core.summary.addRaw(summaryMD).write()
 
-		// Set environment variable for use in subsequent job steps
-		core.exportVariable('VERCEL_PREVIEW_URL', previewUrl)
-		core.exportVariable('VERCEL_DEPLOYMENT_UNIQUE_URL', deploymentUniqueURL)
+		// Set environment variables for use in subsequent job steps
+		core.setOutput('DEPLOYMENT_CREATED', true)
+		core.setOutput('DEPLOYMENT_ID', deployment.id)
+		core.setOutput('PREVIEW_URL', deploymentURLs.preview)
+		core.setOutput('DEPLOYMENT_UNIQUE_URL', deploymentURLs.unique)
+		core.setOutput('DEPLOYMENT_URLS', deploymentURLs.all)
+		core.setOutput('DEPLOYMENT_INSPECTOR_URL', deploymentURLs.inspector)
+		core.setOutput('COMMENT_CREATED', IS_PR && CREATE_COMMENT)
 
-		core.info('Done')
+		core.exportVariable('VERCEL_PREVIEW_URL', deploymentURLs.preview)
+		core.exportVariable('VERCEL_DEPLOYMENT_UNIQUE_URL', deploymentURLs.unique)
+
+		core.info('Done ✅')
 	} catch (err) {
 		await github.updateDeployment('failure')
 		core.error(`Catch Error: ${ err }`)

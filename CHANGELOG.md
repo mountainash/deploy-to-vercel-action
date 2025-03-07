@@ -32,6 +32,8 @@
 
 - Updated to eslint v9
 - Removed dependency on remote eslint config
+- Docs: `secrets.GH_PAT` replaced with `secrets.GITHUB_TOKEN`
+- GHActions workflows updated to use cache built into the Node setup step
 
 ## [v2.2.6] - 2024-04-12
 
@@ -41,7 +43,7 @@
 
 ## [v2.2.5] - 2024-04-11
 
-- Replace `_` in alias domains with `-` to match allowed domains names @mountainash #3
+- Replace `_` in alias domains with `-` to match allowed domain names @mountainash #3
 
 ## [v2.2.4] - 2024-04-11
 

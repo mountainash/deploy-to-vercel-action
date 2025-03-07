@@ -2,12 +2,12 @@
 
 ## @mountainash fork use
 
-Until this fork is merged into the main repo, you can use the following to get the latest changes:
+[Until this fork is merged into the main repo](https://github.com/BetaHuhn/deploy-to-vercel-action/pull/384), you can use the following to get the latest changes:
 
 ```yml
-uses: mountainash/fork-deploy-to-vercel-action@develop
+uses: mountainash/deploy-to-vercel-action@develop
 OR
-uses: mountainash/fork-deploy-to-vercel-action@65a8b653a66a8ad5b0abd59d47589aef4c111806
+uses: mountainash/deploy-to-vercel-action@65a8b653a<< replace with latest commit >>_aef4c111806
 ```
 
 ## @mountainash fork changes
@@ -19,13 +19,13 @@ uses: mountainash/fork-deploy-to-vercel-action@65a8b653a66a8ad5b0abd59d47589aef4
 - [x] Allow Vercel domain aliases to be set on PRs
 - [x] Using `@actions/exec` instead of spawn = require('child_process') for better OS portability
 - [x] Fix: EditorConfig conflicted with Eslint rules
-- [x] Using npx to run Vercel CLI to avoid version missmatches (as seen in #374, #367, #226)
+- [x] Using npx to run Vercel CLI to avoid version miss-matches (as seen in #374, #367, #226)
 - [x] FEATURE ✨ Add a Workflow Summary to each run
 - [x] Exporting `VERCEL_PREVIEW_URL` and `VERCEL_DEPLOYMENT_UNIQUE_URL` for use in other job steps
-- [x] Using @actions/core to correctly get boolean and multilined inputs
+- [x] Using @actions/core to correctly get boolean and multi-lined inputs
 - [x] Removed default "deploy" label from PRs
 - [x] More emojis in logs 📝
-- [x] Better accessability formatting for comment table
+- [x] Better accessibility formatting for comment table
 - [x] FEATURE ✨ Transfer runtime secrets/envars from GHAction to Vercel Settings
 - [ ] FEATURE ✨ Build within action (not just PREBUILT)
 
@@ -33,23 +33,9 @@ uses: mountainash/fork-deploy-to-vercel-action@65a8b653a66a8ad5b0abd59d47589aef4
 
 ---
 
-⚠️ This is a fork of "deploy-to-vercel-action" is under heavy development - use with care.
-
-If you'd like to try it, please use the `develop` branch or the latest SHA, eg:
-
-```yml
-uses: mountainash/fork-deploy-to-vercel-action@develop
-
-## OR
-
-uses: mountainash/fork-deploy-to-vercel-action@e9eb65d39e2d13257f5d5613e771ba2da8357dd9
-```
-
----
-
 <div align="center">
 
-[![Node CI](https://github.com/mountainash/fork-deploy-to-vercel-action/workflows/Node%20CI/badge.svg)](https://github.com/mountainash/fork-deploy-to-vercel-action/actions?query=workflow%3A%22Node+CI%22) [![Release CI](https://github.com/mountainash/fork-deploy-to-vercel-action/workflows/Release%20CI/badge.svg)](https://github.com/mountainash/fork-deploy-to-vercel-action/actions?query=workflow%3A%22Release+CI%22) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mountainash/fork-deploy-to-vercel-action/blob/master/LICENSE)
+[![Node CI](https://github.com/mountainash/deploy-to-vercel-action/workflows/Node%20CI/badge.svg)](https://github.com/mountainash/deploy-to-vercel-action/actions?query=workflow%3A%22Node+CI%22) [![Release CI](https://github.com/mountainash/deploy-to-vercel-action/workflows/Release%20CI/badge.svg)](https://github.com/mountainash/deploy-to-vercel-action/actions?query=workflow%3A%22Release+CI%22) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mountainash/deploy-to-vercel-action/blob/master/LICENSE)
 
 Deploy your project to Vercel using GitHub Actions. Supports PR previews and GitHub deployments.
 
@@ -59,7 +45,7 @@ Deploy your project to Vercel using GitHub Actions. Supports PR previews and Git
 
 ## 👋 Introduction
 
-[deploy-to-vercel-action](https://github.com/mountainash/fork-deploy-to-vercel-action) uses GitHub Actions to deploy your project/site to [Vercel](https://vercel.com). It offers more customization than Vercel's GitHub integration in terms of when to deploy your site. Using GitHub Actions [Events](https://docs.github.com/en/actions/reference/events-that-trigger-workflows) you can choose to deploy every commit, only on new releases or even on a cron schedule. The Action can also deploy every PR and comment on it with a custom preview URL. It uses the Vercel CLI and can automatically create a Deployment on GitHub as well.
+[deploy-to-vercel-action](https://github.com/mountainash/deploy-to-vercel-action) uses GitHub Actions to deploy your project/site to [Vercel](https://vercel.com). It offers more customization than Vercel's GitHub integration in terms of when to deploy your site. Using GitHub Actions [Events](https://docs.github.com/en/actions/reference/events-that-trigger-workflows) you can choose to deploy every commit, only on new releases or even on a cron schedule. The Action can also deploy every PR and comment on it with a custom preview URL. It uses the Vercel CLI and can automatically create a Deployment on GitHub as well.
 
 ## 🚀 Features
 
@@ -74,12 +60,9 @@ Deploy your project to Vercel using GitHub Actions. Supports PR previews and Git
 
 Before you can start using the Action, you have to setup a few Action inputs. Refer to the [configuration](#%EF%B8%8F-configuration) section below for more info.
 
-Then create a `.yml` file in your `.github/workflows` folder (you can find more info about the structure in the [GitHub Docs](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions)) and add the following:
-
-**`.github/workflows/deploy.yml`**
+Create a `.yml` file in your `.github/workflows` folder (you can find more info about the structure in the [GitHub Docs](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions)) and add the following:
 
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -92,9 +75,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -105,27 +88,27 @@ jobs:
 To always use the latest version of the Action add the `latest` tag to the action name like this:
 
 ```yml
-uses: mountainash/fork-deploy-to-vercel-action@latest
+uses: mountainash/deploy-to-vercel-action@latest
 ```
 
-If you want to make sure that your Workflow doesn't suddenly break when a new major version is released, use the `v1` tag instead (recommended usage):
+If you want to make sure that your Workflow doesn't suddenly break when a new major version is released, use the `v2` tag instead (recommended usage):
 
 ```yml
-uses: mountainash/fork-deploy-to-vercel-action@develop
+uses: mountainash/deploy-to-vercel-action@develop
 ```
 
-With the `v1` tag you will always get the latest non-breaking version which will include potential bug fixes in the future. If you use a specific version, make sure to regularly check if a new version is available, or enable Dependabot.
+With the `v2` tag you will always get the latest non-breaking version which will include potential bug fixes in the future. If you use a specific version, make sure to regularly check if a new version is available, or enable Dependabot.
 
 ## ⚙️ Action Inputs
 
-Here are all the inputs [deploy-to-vercel-action](https://github.com/mountainash/fork-deploy-to-vercel-action) takes:
+Here are all the inputs [deploy-to-vercel-action](https://github.com/mountainash/deploy-to-vercel-action) takes:
 
 | Key | Value | Required | Default |
 | ------------- | ------------- | ------------- | ------------- |
 | `GITHUB_TOKEN` | GitHub Token to use when creating deployment and comment (more info [below](#tokens)) | **Yes** | N/A |
 | `VERCEL_TOKEN` | Vercel Token to use with the Vercel CLI (more info [below](#tokens)) | **Yes** | N/A |
-| `VERCEL_ORG_ID` | Id of your Vercel Organisation (more info [below](#vercel-project)) | **Yes** | N/A |
-| `VERCEL_PROJECT_ID` | Id of your Vercel project (more info [below](#vercel-project)) | **Yes** | N/A |
+| `VERCEL_ORG_ID` | ID of your Vercel Organisation (more info [below](#vercel-project)) | **Yes** | N/A |
+| `VERCEL_PROJECT_ID` | ID of your Vercel project (more info [below](#vercel-project)) | **Yes** | N/A |
 | `GITHUB_DEPLOYMENT` | Create a deployment on GitHub | **No** | true |
 | `GITHUB_DEPLOYMENT_ENV` | Custom environment for the GitHub deployment | **No** | `Production` or `Preview` |
 | `PRODUCTION` | Create a production deployment on Vercel and GitHub | **No** | true (false for PR deployments) |
@@ -146,13 +129,13 @@ Here are all the inputs [deploy-to-vercel-action](https://github.com/mountainash
 
 ## 🛠️ Configuration
 
-In order for the Action to interact with GitHub and Vercel on your behalf, you have to specify your GitHub and Vercel Access Tokens as well as your Vercel Organization and Project Id.
+In order for the Action to interact with GitHub and Vercel on your behalf, you have to specify your GitHub and Vercel Access Tokens as well as your Vercel Organization and Project ID.
 
 ### Tokens
 
 You can generate your GitHub Personal Access token [here](https://github.com/settings/tokens) and your Vercel Token [here](https://vercel.com/account/tokens) and then specify them as `GITHUB_TOKEN` and `VERCEL_TOKEN` in the Actions inputs.
 
-> **Note:** It is recommended to set the tokens as [Repository Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
+> **NOTE:** It is recommended to set the tokens as [Repository Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
 
 ### Vercel Project
 
@@ -160,11 +143,11 @@ Before you can start using this Action you have to link your project with [Verce
 
 Run the command `vercel` inside your projects root and follow the steps described by the [Vercel CLI](https://vercel.com/docs/cli).
 
-Once set up, a new `.vercel` directory will be added to your directory. The `.vercel/project.json` file contains both the organization (`orgId`) and project (`projectId`) id of your project.
+Once set up, a new `.vercel` directory will be added to your directory. The `.vercel/project.json` file contains both the organization (`orgId`) and project (`projectId`) ID of your project.
 
 You can then specify them as `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` in the Actions inputs.
 
-> **Note:** It is recommended to set them as [Repository Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
+> **NOTE:** It is recommended to set them as [Repository Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
 
 ### Custom Domains
 
@@ -177,6 +160,7 @@ ALIAS_DOMAINS: |
 ```
 
 #### Pro Teams
+
 If your team is set up to `Pro`, remember to set the `VERCEL_SCOPE` to the slug of your team.
 
 ```yml
@@ -185,17 +169,17 @@ with:
 ```
 
 Otherwise, the action will fail trying to deploy custom domains with default account credentials. It will result in request for authorisation and action fail.
-Even if you extend the scope of `VERCEL_TOKEN` to `All non-SAML Team`, without properly set up `VERCEL_SCOPE` the cli will use default account and fail.
+Even if you extend the scope of `VERCEL_TOKEN` to `All non-SAML Team`, without properly setting up `VERCEL_SCOPE` the Vercel CLI will use the default account (often your personal account) and fail.
 
-> **Note:** You can use `*.vercel.app` or `*.now.sh` without configuration, but any other custom domain needs to be configured in the Vercel Dashboard first
+> **NOTE:** You can use `*.vercel.app` or `*.now.sh` without configuration, but any other custom domain needs to be configured in the Vercel Dashboard first
 
 You can also use any of the following variables anywhere in the domain:
 
-- `{USER}` - the owner of the repository the action was executed in
-- `{REPO}` - the name of the repository the action was executed in
-- `{BRANCH}` - the branch in which the action was triggered
-- `{SHA}` - the most recent commit's sha
-- `{PR}` - the number of the pr the action was triggered from
+- `{USER}` - the owner of the Git repository the action was executed in
+- `{REPO}` - the name of the Git repository the action was executed in
+- `{BRANCH}` - the Git branch in which the action was triggered
+- `{SHA}` - the most recent commit's SHA
+- `{PR}` - the number of the PR the action was triggered from
 
 Examples:
 
@@ -211,17 +195,17 @@ This is especially useful if you want to change the PR preview domain with the `
 PR_PREVIEW_DOMAIN: "{REPO}-{PR}.vercel.app"
 ```
 
-> **Note:** You can only specify one custom domain for `PR_PREVIEW_DOMAIN`
+> **NOTE:** You can only specify one custom domain for `PR_PREVIEW_DOMAIN`
 
 ### Runtime EnvVars
 
-> **Note:** 🆕 This feature is still in development and may not work as expected!
+> **NTE:** 🆕 This feature is still in development and may not work as expected!
 
 You can set environment variables in the Vercel deployment environment using the `RUNTIME_ENV` array input. This is useful for environment variables that are needed by Severless & Edge functions, or other runtime variables.
 
-**WARNING:** Variables are set on Vercel in plain text, so be careful with sensitive data.
+**WARNING:** Variables are set on Vercel in plain text, so be careful with sensitive data if multiple team members can access your project settings in Vercel.
 
-**WARNING:** Existing variable values will be overwritten without warning.
+**WARNING:** Existing variable values will be overwritten without warning each time the script is run.
 
 **TIP:** (for Next.js) You can see what your project needs by by running `vercel build` and then searching the file contents of `.next/` directory for the `process.env` use.
 
@@ -244,10 +228,7 @@ You also have to manually checkout the PR branch, as `pull_request_target` runs 
 
 Here's a complete workflow as an example:
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -272,16 +253,16 @@ jobs:
           repository: ${{ steps.script.outputs.repo }}
 
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           DEPLOY_PR_FROM_FORK: true # This has some serious security risks you need be aware of
 ```
 
-> **Note:** Since the first of March 2021 workflow runs which are triggered by a Dependabot PR will act as if they are made from a fork and have the same limitations described above (more info in [GitHub's Changelog](https://github.blog/changelog/2021-02-19-github-actions-workflows-triggered-by-dependabot-prs-will-run-with-read-only-permissions/)), except that DEPLOY_PR_FROM_FORK doesn't have to be set to true.
+> **NOTE:** Since the first of March 2021 workflow runs which are triggered by a Dependabot PR will act as if they are made from a fork and have the same limitations described above (more info in [GitHub's Changelog](https://github.blog/changelog/2021-02-19-github-actions-workflows-triggered-by-dependabot-prs-will-run-with-read-only-permissions/)), except that DEPLOY_PR_FROM_FORK doesn't have to be set to true.
 
 ## 📖 Examples
 
@@ -289,12 +270,9 @@ Here are a few examples to help you get started!
 
 ### Basic Example
 
-The workflow below will run on every push to master and every time a new PR is created or an existing PR changed. [deploy-to-vercel-action](https://github.com/mountainash/fork-deploy-to-vercel-action) will deploy the master branch to your Vercel production environment and comment on every PR with a preview link to the deployed PR.
-
-**`.github/workflows/deploy.yml`**
+The workflow below will run on every push to master and every time a new PR is created or an existing PR changed. [deploy-to-vercel-action](https://github.com/mountainash/deploy-to-vercel-action) will deploy the master branch to your Vercel production environment and comment on every PR with a preview link to the deployed PR.
 
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -307,9 +285,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -319,10 +297,7 @@ jobs:
 
 The workflow below will run on every push to the staging branch. The Action will then deploy it to the preview environment on Vercel.
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy staging CI
 on:
   push:
     branches: [ staging ]
@@ -333,9 +308,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -346,10 +321,7 @@ jobs:
 
 The workflow below will only run after a new release is created on GitHub.
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   release:
     types: [created]
@@ -360,9 +332,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -370,12 +342,9 @@ jobs:
 
 ### Assign alias domains
 
-If you want, [deploy-to-vercel-action](https://github.com/mountainash/fork-deploy-to-vercel-action) can assign multiple domains to each deployment and also change the PR preview domain:
-
-**`.github/workflows/deploy.yml`**
+If you want, [deploy-to-vercel-action](https://github.com/mountainash/deploy-to-vercel-action) can assign multiple domains to each deployment and also change the PR preview domain:
 
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -388,9 +357,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -404,10 +373,7 @@ jobs:
 
 The workflow below will wait until your other CI jobs are completed until it will deploy your project to Vercel.
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -425,9 +391,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -437,10 +403,7 @@ jobs:
 
 The workflow below will not automatically create a PR comment. This is useful for example when your PR can trigger multiple deployments (think monorepo for example) and you want to take control over PR comment creation by yourself. You can use output produced by this action to build comment by yourself.
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -454,9 +417,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
         id: vercel-deploy
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -489,10 +452,7 @@ The workflow below will run at the given interval and deploy your project to Ver
 
 > Note: You can use any other action to change your project or run your own script before deploying those changes to Vercel
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   schedule:
     - cron:  '0 8 * * 1' # will run every Monday at 8 am
@@ -504,9 +464,9 @@ jobs:
         uses: actions/checkout@v4
       # maybe do something else first
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -520,10 +480,7 @@ To overcome this limitation you can use the `pull_request_target` event and chec
 
 > Note: By default this action doesn't deploy any forks so you can use `pull_request_target` without any security concerns
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -548,9 +505,9 @@ jobs:
           repository: ${{ steps.script.outputs.repo }}
 
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -560,10 +517,7 @@ jobs:
 
 You can define the build environment variables when using the action:
 
-**`.github/workflows/deploy.yml`**
-
 ```yml
-name: Deploy CI
 on:
   push:
     branches: [master]
@@ -576,9 +530,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to Vercel Action
-        uses: mountainash/fork-deploy-to-vercel-action@develop
+        uses: mountainash/deploy-to-vercel-action@develop
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -597,19 +551,21 @@ The actual source code of this Action is in the `src` folder.
 
 - run `yarn lint` or `npm run lint` to run eslint.
 - run `yarn start` or `npm run start` to run the Action locally.
-- run `yarn build` or `npm run build` to produce a production version of [deploy-to-vercel-action](https://github.com/mountainash/fork-deploy-to-vercel-action) in the `dist` folder.
+- run `yarn build` or `npm run build` to produce a production version of [deploy-to-vercel-action](https://github.com/mountainash/deploy-to-vercel-action) in the `dist` folder.
 
 Pass in inputs as environment variables with the prefix `INPUT_` (e.g. `INPUT_GITHUB_TOKEN`) & `RUNNING_LOCAL=true`.
 
-<!-- Minimal Example: `RUNNING_LOCAL=true INPUT_GITHUB_TOKEN=$INPUT_GITHUB_TOKEN INPUT_VERCEL_TOKEN=$INPUT_VERCEL_TOKEN INPUT_VERCEL_ORG_ID=$INPUT_VERCEL_ORG_ID INPUT_VERCEL_PROJECT_ID=$INPUT_VERCEL_PROJECT_ID GITHUB_REPOSITORY="mountainash/fork-deploy-to-vercel-action" INPUT_PREBUILT="false" INPUT_PRODUCTION="false" INPUT_GITHUB_DEPLOYMENT="false" INPUT_CREATE_COMMENT="false" INPUT_DELETE_EXISTING_COMMENT="false" INPUT_ATTACH_COMMIT_METADATA="false" INPUT_DEPLOY_PR_FROM_FORK="false" INPUT_TRIM_COMMIT_MESSAGE="false" INPUT_FORCE="false" npm run start` -->
+<!-- Minimal Example: `RUNNING_LOCAL=true INPUT_GITHUB_TOKEN=$INPUT_GITHUB_TOKEN INPUT_VERCEL_TOKEN=$INPUT_VERCEL_TOKEN INPUT_VERCEL_ORG_ID=$INPUT_VERCEL_ORG_ID  INPUT_VERCEL_SCOPE=$INPUT_VERCEL_SCOPE INPUT_VERCEL_PROJECT_ID=$INPUT_VERCEL_PROJECT_ID GITHUB_REPOSITORY="mountainash/deploy-to-vercel-action" INPUT_PREBUILT="false" INPUT_PRODUCTION="false" INPUT_GITHUB_DEPLOYMENT="false" INPUT_CREATE_COMMENT="false" INPUT_DELETE_EXISTING_COMMENT="false" INPUT_ATTACH_COMMIT_METADATA="false" INPUT_DEPLOY_PR_FROM_FORK="false" INPUT_TRIM_COMMIT_MESSAGE="false" INPUT_FORCE="false" npm run start` -->
 
 ## ❔ About
 
-This project was developed by me ([@betahuhn](https://github.com/BetaHuhn)) and upgraded and extended by [@mountainash](https://github.com/mountainash) in my free time. If you want to support me: [![Donate via PayPal](https://img.shields.io/badge/paypal-donate-009cde.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=394RTSBEEEFEE) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F81S2RK)
+This project was developed by me ([@betahuhn](https://github.com/BetaHuhn)) and upgraded and extended by [@mountainash](https://github.com/mountainash) in my free time.
+
+If you want to support @betahuhn: [![Donate via PayPal](https://img.shields.io/badge/paypal-donate-009cde.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=394RTSBEEEFEE) [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F81S2RK)
 
 If you want to support @mountainash [![Sponsor via GitHub](https://img.shields.io/badge/sponsor-via%20github-94a1f2.svg)](https://github.com/sponsors/mountainash)
 
-**[deploy-to-vercel-action](https://github.com/mountainash/fork-deploy-to-vercel-action) is in no way affiliated with Vercel.**
+**[deploy-to-vercel-action](https://github.com/mountainash/deploy-to-vercel-action) is in no way affiliated with Vercel.**
 
 ## 📄 License
 
