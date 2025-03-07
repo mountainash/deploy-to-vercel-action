@@ -31930,10 +31930,11 @@ const setEnvironment = async (key, value) => {
 
 	params.set('upsert', 'true')
 
-	if (typeof VERCEL_SCOPE !== 'undefined')
+	if (VERCEL_SCOPE) {
 		params.set('teamId', VERCEL_SCOPE)
-	else
+	} else {
 		params.set('teamId', VERCEL_ORG_ID)
+	}
 
 	url.search = params.toString()
 
