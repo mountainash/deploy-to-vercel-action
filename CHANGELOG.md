@@ -1,5 +1,33 @@
 # Change Log
 
+## [2.4.1] - 2025-03-07
+
+- 📦 @actions/core@1.11.1
+- 📦 @types/node@20.17.23
+- 📦 @vercel/ncc@0.38.3
+- 📦 eslint@9.21.0
+- 📦 globals@16.0.0
+
+## [2.4.0] - 2024-05-07
+
+- BUG: checking for empty, "false" and "null" ALIAS's as strings
+- 🧹 refactor of deploymentURLs (URLs are now a named object, not a number positioned array)
+- Comments & Summary don't show empty rows
+
+## [2.3.2] - 2024-05-07
+
+- Unique domain added to PR comment
+- Markdown table PR comment formatting
+- less domain duplication in the Workflow Summary
+- Truncate long ALIAS_DOMAINS values
+- 📦 eslint@9.2.0
+
+## [2.3.1] - 2024-04-26
+
+- Better logging of ALIAS_DOMAINS output
+- Skipping falsey ALIAS_DOMAINS values
+- 📦 eslint@9.1.1
+
 ## [2.3.0] - 2024-04-12
 
 - Updated to eslint v9
