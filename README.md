@@ -2,7 +2,7 @@
 
 ## @mountainash fork use
 
-Until this fork is merged into the main repo, you can use the following to get the latest changes:
+[Until this fork is merged into the main repo](https://github.com/BetaHuhn/deploy-to-vercel-action/pull/384), you can use the following to get the latest changes:
 
 ```yml
 uses: mountainash/deploy-to-vercel-action@develop
@@ -107,8 +107,8 @@ Here are all the inputs [deploy-to-vercel-action](https://github.com/mountainash
 | ------------- | ------------- | ------------- | ------------- |
 | `GITHUB_TOKEN` | GitHub Token to use when creating deployment and comment (more info [below](#tokens)) | **Yes** | N/A |
 | `VERCEL_TOKEN` | Vercel Token to use with the Vercel CLI (more info [below](#tokens)) | **Yes** | N/A |
-| `VERCEL_ORG_ID` | Id of your Vercel Organisation (more info [below](#vercel-project)) | **Yes** | N/A |
-| `VERCEL_PROJECT_ID` | Id of your Vercel project (more info [below](#vercel-project)) | **Yes** | N/A |
+| `VERCEL_ORG_ID` | ID of your Vercel Organisation (more info [below](#vercel-project)) | **Yes** | N/A |
+| `VERCEL_PROJECT_ID` | ID of your Vercel project (more info [below](#vercel-project)) | **Yes** | N/A |
 | `GITHUB_DEPLOYMENT` | Create a deployment on GitHub | **No** | true |
 | `GITHUB_DEPLOYMENT_ENV` | Custom environment for the GitHub deployment | **No** | `Production` or `Preview` |
 | `PRODUCTION` | Create a production deployment on Vercel and GitHub | **No** | true (false for PR deployments) |
@@ -143,7 +143,7 @@ Before you can start using this Action you have to link your project with [Verce
 
 Run the command `vercel` inside your projects root and follow the steps described by the [Vercel CLI](https://vercel.com/docs/cli).
 
-Once set up, a new `.vercel` directory will be added to your directory. The `.vercel/project.json` file contains both the organization (`orgId`) and project (`projectId`) id of your project.
+Once set up, a new `.vercel` directory will be added to your directory. The `.vercel/project.json` file contains both the organization (`orgId`) and project (`projectId`) ID of your project.
 
 You can then specify them as `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` in the Actions inputs.
 
@@ -169,17 +169,17 @@ with:
 ```
 
 Otherwise, the action will fail trying to deploy custom domains with default account credentials. It will result in request for authorisation and action fail.
-Even if you extend the scope of `VERCEL_TOKEN` to `All non-SAML Team`, without properly set up `VERCEL_SCOPE` the cli will use default account and fail.
+Even if you extend the scope of `VERCEL_TOKEN` to `All non-SAML Team`, without properly setting up `VERCEL_SCOPE` the Vercel CLI will use the default account (often your personal account) and fail.
 
 > **NOTE:** You can use `*.vercel.app` or `*.now.sh` without configuration, but any other custom domain needs to be configured in the Vercel Dashboard first
 
 You can also use any of the following variables anywhere in the domain:
 
-- `{USER}` - the owner of the repository the action was executed in
-- `{REPO}` - the name of the repository the action was executed in
-- `{BRANCH}` - the branch in which the action was triggered
-- `{SHA}` - the most recent commit's sha
-- `{PR}` - the number of the pr the action was triggered from
+- `{USER}` - the owner of the Git repository the action was executed in
+- `{REPO}` - the name of the Git repository the action was executed in
+- `{BRANCH}` - the Git branch in which the action was triggered
+- `{SHA}` - the most recent commit's SHA
+- `{PR}` - the number of the PR the action was triggered from
 
 Examples:
 
@@ -203,9 +203,9 @@ PR_PREVIEW_DOMAIN: "{REPO}-{PR}.vercel.app"
 
 You can set environment variables in the Vercel deployment environment using the `RUNTIME_ENV` array input. This is useful for environment variables that are needed by Severless & Edge functions, or other runtime variables.
 
-**WARNING:** Variables are set on Vercel in plain text, so be careful with sensitive data.
+**WARNING:** Variables are set on Vercel in plain text, so be careful with sensitive data if multiple team members can access your project settings in Vercel.
 
-**WARNING:** Existing variable values will be overwritten without warning.
+**WARNING:** Existing variable values will be overwritten without warning each time the script is run.
 
 **TIP:** (for Next.js) You can see what your project needs by by running `vercel build` and then searching the file contents of `.next/` directory for the `process.env` use.
 
@@ -555,7 +555,7 @@ The actual source code of this Action is in the `src` folder.
 
 Pass in inputs as environment variables with the prefix `INPUT_` (e.g. `INPUT_GITHUB_TOKEN`) & `RUNNING_LOCAL=true`.
 
-<!-- Minimal Example: `RUNNING_LOCAL=true INPUT_GITHUB_TOKEN=$INPUT_GITHUB_TOKEN INPUT_VERCEL_TOKEN=$INPUT_VERCEL_TOKEN INPUT_VERCEL_ORG_ID=$INPUT_VERCEL_ORG_ID INPUT_VERCEL_PROJECT_ID=$INPUT_VERCEL_PROJECT_ID GITHUB_REPOSITORY="mountainash/deploy-to-vercel-action" INPUT_PREBUILT="false" INPUT_PRODUCTION="false" INPUT_GITHUB_DEPLOYMENT="false" INPUT_CREATE_COMMENT="false" INPUT_DELETE_EXISTING_COMMENT="false" INPUT_ATTACH_COMMIT_METADATA="false" INPUT_DEPLOY_PR_FROM_FORK="false" INPUT_TRIM_COMMIT_MESSAGE="false" INPUT_FORCE="false" npm run start` -->
+<!-- Minimal Example: `RUNNING_LOCAL=true INPUT_GITHUB_TOKEN=$INPUT_GITHUB_TOKEN INPUT_VERCEL_TOKEN=$INPUT_VERCEL_TOKEN INPUT_VERCEL_ORG_ID=$INPUT_VERCEL_ORG_ID  INPUT_VERCEL_SCOPE=$INPUT_VERCEL_SCOPE INPUT_VERCEL_PROJECT_ID=$INPUT_VERCEL_PROJECT_ID GITHUB_REPOSITORY="mountainash/deploy-to-vercel-action" INPUT_PREBUILT="false" INPUT_PRODUCTION="false" INPUT_GITHUB_DEPLOYMENT="false" INPUT_CREATE_COMMENT="false" INPUT_DELETE_EXISTING_COMMENT="false" INPUT_ATTACH_COMMIT_METADATA="false" INPUT_DEPLOY_PR_FROM_FORK="false" INPUT_TRIM_COMMIT_MESSAGE="false" INPUT_FORCE="false" npm run start` -->
 
 ## ❔ About
 
