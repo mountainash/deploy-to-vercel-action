@@ -19,6 +19,9 @@ jobs:
       pull-requests: write
       deployments: write
 
+    env:
+      VIRTUALBUILD_PATH: .vercel/output
+
     steps:
       - name: Checkout ${{ github.event.inputs.ref }} 📥
         uses: actions/checkout@v4
@@ -39,15 +42,13 @@ jobs:
       - name: Make sample website 📄
         env:
           LOCAL_REF: ${{ github.event.inputs.ref }}
-          BUILD_DIR: .vercel/output/static
+          BUILD_DIR: $VIRTUALBUILD_PATH/static
         run: mkdir -p $BUILD_DIR/ && touch $BUILD_DIR/index.html && echo "LOCAL_REF=$LOCAL_REF" > $BUILD_DIR/index.html
 
       - name: Make sample config 📄
-        env:
-          CONFIG_DIR: .vercel/output
         run: |
-          touch $CONFIG_DIR/config.json
-          echo "{\"version\": 3}" > $CONFIG_DIR/config.json
+          touch $VIRTUALBUILD_PATH/config.json
+          echo "{\"version\": 3}" > $VIRTUALBUILD_PATH/config.json
 
       - name: Deploy to Vercel 🚀
         id: verceldeploy
