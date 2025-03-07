@@ -1,4 +1,5 @@
 name: Node CI
+
 on:
   push:
     branches-ignore:
@@ -6,34 +7,42 @@ on:
   pull_request:
     branches-ignore:
       - main
+
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout ${{ github.event.inputs.ref }} 📥
         uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-      - name: Install dependencies
+          cache: npm
+
+      - name: Install dependencies 📦
         run: npm ci
-      - name: Run lint command
+
+      - name: Run lint 🧪
         run: npm run lint
+
   build:
     name: Build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout ${{ github.event.inputs.ref }} 📥
         uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-      - name: Install dependencies
+          cache: npm
+
+      - name: Install dependencies 📦
         run: npm ci
-      - name: Run build command
+
+      - name: Run build 🏗
         run: npm run build
