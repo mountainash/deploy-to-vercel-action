@@ -18,9 +18,6 @@ yarn-error.log*
 # Optional npm cache directory
 .npm
 
-# Optional eslint cache
-.eslintcache
-
 # Yarn Integrity file
 .yarn-integrity
 

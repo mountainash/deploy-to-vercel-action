@@ -3,11 +3,13 @@
 ## [2.5.0] - 2025-03-07
 
 - Setting `VERCEL_SCOPE` to `VERCEL_ORG_ID` if not explicitly set
+- 🧪 SReplaced ESlint with Biome (affects project development only)
 - 📦 @actions/core@1.11.1
 - 📦 @types/node@20.17.23
 - 📦 @vercel/ncc@0.38.3
-- 📦 eslint@9.21.0
-- 📦 globals@16.0.0
+- 🗑️ eslint@9.21.0
+- 🗑️ globals@16.0.0
+- 🆕 @biomejs/biome
 
 ## [2.4.0] - 2024-05-07
 

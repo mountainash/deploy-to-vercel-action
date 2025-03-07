@@ -28,6 +28,7 @@ uses: mountainash/deploy-to-vercel-action@65a8b653a<< replace with latest commit
 - [x] Better accessibility formatting for comment table
 - [x] FEATURE ✨ Transfer runtime secrets/envars from GHAction to Vercel Settings
 - [ ] FEATURE ✨ Build within action (not just PREBUILT)
+- [ ] FEATURE ✨ Project changed from ESlint to Biome
 
 - See [CHANGELOG](./CHANGELOG.md) for _**many**_ 📦 dependencies updates (inc. [Node 20](https://github.com/BetaHuhn/deploy-to-vercel-action/pull/379)) and bug fixes
 
