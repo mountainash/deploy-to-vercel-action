@@ -129,6 +129,8 @@ const setEnvironment = async (key, value) => {
 
 	if (typeof VERCEL_SCOPE !== 'undefined')
 		params.set('teamId', VERCEL_SCOPE)
+	else
+		params.set('teamId', VERCEL_ORG_ID)
 
 	url.search = params.toString()
 

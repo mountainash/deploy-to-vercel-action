@@ -1,7 +1,8 @@
 # Change Log
 
-## [2.4.1] - 2025-03-07
+## [2.5.0] - 2025-03-07
 
+- Setting `VERCEL_SCOPE` to `VERCEL_ORG_ID` if not explicitly set
 - 📦 @actions/core@1.11.1
 - 📦 @types/node@20.17.23
 - 📦 @vercel/ncc@0.38.3
