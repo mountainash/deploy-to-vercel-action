@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@types/node": "20.12.10",
-    "@vercel/ncc": "0.38.1",
+    "@vercel/ncc": "0.38.3",
     "eslint": "9.2.0",
     "globals": "^15.1.0"
   },
