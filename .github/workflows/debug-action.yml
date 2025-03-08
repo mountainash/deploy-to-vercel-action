@@ -36,7 +36,10 @@ jobs:
         env:
           LOCAL_REF: ${{ github.ref_name }}
           BUILD_DIR: $VIRTUALBUILD_PATH/static
-        run: mkdir -p $BUILD_DIR/ && touch $BUILD_DIR/index.html && echo "LOCAL_REF=$LOCAL_REF" > $BUILD_DIR/index.html
+        run: |
+          mkdir -p $BUILD_DIR
+          touch $BUILD_DIR/index.html
+          echo "LOCAL_REF=$LOCAL_REF" > $BUILD_DIR/index.html
 
       - name: Make sample config 📄
         run: |
