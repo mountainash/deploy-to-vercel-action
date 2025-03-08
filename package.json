@@ -15,13 +15,7 @@
     "type": "git",
     "url": "git+https://github.com/mountainash/deploy-to-vercel-action.git"
   },
-  "keywords": [
-    "vercel",
-    "deploy",
-    "deployment",
-    "github action",
-    "upload"
-  ],
+  "keywords": ["vercel", "deploy", "deployment", "github action", "upload"],
   "author": "Maximilian Schiller <schiller@mxis.ch>",
   "contributors": [
     {

@@ -9,7 +9,7 @@ const {
 	REF,
 	LOG_URL,
 	PR_LABELS,
-	GITHUB_DEPLOYMENT_ENV
+	GITHUB_DEPLOYMENT_ENV,
 } = require('./config')
 
 const init = () => {
@@ -23,9 +23,10 @@ const init = () => {
 			repo: REPOSITORY,
 			ref: REF,
 			required_contexts: [],
-			environment: GITHUB_DEPLOYMENT_ENV || (PRODUCTION ? 'Production' : 'Preview'),
+			environment:
+				GITHUB_DEPLOYMENT_ENV || (PRODUCTION ? 'Production' : 'Preview'),
 			description: 'Deploy to Vercel',
-			auto_merge: false
+			auto_merge: false,
 		})
 
 		deploymentId = deployment.data.id
@@ -43,7 +44,7 @@ const init = () => {
 			state: status,
 			log_url: LOG_URL,
 			environment_url: url || LOG_URL,
-			description: 'Starting deployment to Vercel'
+			description: 'Starting deployment to Vercel',
 		})
 
 		return deploymentStatus.data
@@ -53,17 +54,19 @@ const init = () => {
 		const { data } = await client.issues.listComments({
 			owner: USER,
 			repo: REPOSITORY,
-			issue_number: PR_NUMBER
+			issue_number: PR_NUMBER,
 		})
 
 		if (data.length < 1) return
 
-		const comment = data.find((comment) => comment.body && comment.body.includes('This pull request has been deployed to Vercel.'))
+		const comment = data.find((comment) =>
+			comment.body?.includes('This pull request has been deployed to Vercel.')
+		)
 		if (comment) {
 			await client.issues.deleteComment({
 				owner: USER,
 				repo: REPOSITORY,
-				comment_id: comment.id
+				comment_id: comment.id,
 			})
 
 			return comment.id
@@ -78,7 +81,7 @@ const init = () => {
 			owner: USER,
 			repo: REPOSITORY,
 			issue_number: PR_NUMBER,
-			body: dedented
+			body: dedented,
 		})
 
 		return comment.data
@@ -89,7 +92,7 @@ const init = () => {
 			owner: USER,
 			repo: REPOSITORY,
 			issue_number: PR_NUMBER,
-			labels: PR_LABELS
+			labels: PR_LABELS,
 		})
 
 		return label.data
@@ -99,13 +102,13 @@ const init = () => {
 		const { data } = await client.repos.getCommit({
 			owner: USER,
 			repo: REPOSITORY,
-			ref: REF
+			ref: REF,
 		})
 
 		return {
-			authorName: data.commit.author && data.commit.author.name,
-			authorLogin: data.author && data.author.login,
-			commitMessage: data.commit.message
+			authorName: data.commit.author?.name,
+			authorLogin: data.author?.login,
+			commitMessage: data.commit.message,
 		}
 	}
 
@@ -116,10 +119,10 @@ const init = () => {
 		deleteExistingComment,
 		createComment,
 		addLabel,
-		getCommit
+		getCommit,
 	}
 }
 
 module.exports = {
-	init
+	init,
 }

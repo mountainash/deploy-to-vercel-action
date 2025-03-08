@@ -16,7 +16,7 @@ const {
 	PREBUILT,
 	WORKING_DIRECTORY,
 	FORCE,
-	GITHUB_DEPLOYMENT_ENV
+	GITHUB_DEPLOYMENT_ENV,
 } = require('./config')
 
 let VERCEL_SCOPE = importedVercelScope
@@ -28,8 +28,8 @@ if (!VERCEL_SCOPE) {
 const VercelAPIBase = 'https://api.vercel.com'
 const options = {
 	headers: {
-		Authorization: `Bearer ${ VERCEL_TOKEN }`
-	}
+		Authorization: `Bearer ${VERCEL_TOKEN}`,
+	},
 }
 
 const init = () => {
@@ -40,9 +40,9 @@ const init = () => {
 	let deploymentUrl
 
 	const deploy = async (commit) => {
-		let commandArguments = [ `--token=${ VERCEL_TOKEN }`, 'deploy' ]
+		let commandArguments = [`--token=${VERCEL_TOKEN}`, 'deploy']
 
-		commandArguments.push(`--scope=${ VERCEL_SCOPE }`)
+		commandArguments.push(`--scope=${VERCEL_SCOPE}`)
 
 		if (PRODUCTION) {
 			commandArguments.push('--prod')
@@ -59,31 +59,35 @@ const init = () => {
 
 		if (commit) {
 			const metadata = [
-				`githubCommitAuthorName=${ commit.authorName }`,
-				`githubCommitAuthorLogin=${ commit.authorLogin }`,
-				`githubCommitMessage=${ TRIM_COMMIT_MESSAGE ? commit.commitMessage.split(/\r?\n/)[0] : commit.commitMessage }`,
-				`githubCommitOrg=${ USER }`,
-				`githubCommitRepo=${ REPOSITORY }`,
-				`githubCommitRef=${ BRANCH }`,
-				`githubCommitSha=${ SHA }`,
-				`githubOrg=${ USER }`,
-				`githubRepo=${ REPOSITORY }`,
-				`githubDeployment=1`
+				`githubCommitAuthorName=${commit.authorName}`,
+				`githubCommitAuthorLogin=${commit.authorLogin}`,
+				`githubCommitMessage=${TRIM_COMMIT_MESSAGE ? commit.commitMessage.split(/\r?\n/)[0] : commit.commitMessage}`,
+				`githubCommitOrg=${USER}`,
+				`githubCommitRepo=${REPOSITORY}`,
+				`githubCommitRef=${BRANCH}`,
+				`githubCommitSha=${SHA}`,
+				`githubOrg=${USER}`,
+				`githubRepo=${REPOSITORY}`,
+				'githubDeployment=1',
 			]
 
 			metadata.forEach((item) => {
-				commandArguments = commandArguments.concat([ '--meta', item ])
+				commandArguments = commandArguments.concat(['--meta', item])
 			})
 		}
 
 		if (BUILD_ENV.length) {
 			BUILD_ENV.forEach((item) => {
-				commandArguments = commandArguments.concat([ '--build-env', item ])
+				commandArguments = commandArguments.concat(['--build-env', item])
 			})
 		}
 
 		core.info('Starting deploy with Vercel ▲ CLI')
-		const output = await execCmd('npx vercel', commandArguments, WORKING_DIRECTORY)
+		const output = await execCmd(
+			'npx vercel',
+			commandArguments,
+			WORKING_DIRECTORY
+		)
 		const match = output.match(/(?<=https:\/\/)(.*)/g)
 		const parsed = match ? match[0] : null
 
@@ -95,10 +99,16 @@ const init = () => {
 	}
 
 	const assignAlias = async (aliasUrl) => {
-		const commandArguments = [ `--token=${ VERCEL_TOKEN }`, 'alias', 'set', deploymentUrl, removeSchema(aliasUrl) ]
+		const commandArguments = [
+			`--token=${VERCEL_TOKEN}`,
+			'alias',
+			'set',
+			deploymentUrl,
+			removeSchema(aliasUrl),
+		]
 
 		if (VERCEL_SCOPE) {
-			commandArguments.push(`--scope=${ VERCEL_SCOPE }`)
+			commandArguments.push(`--scope=${VERCEL_SCOPE}`)
 		}
 
 		return await execCmd('npx vercel', commandArguments, WORKING_DIRECTORY)
@@ -106,7 +116,7 @@ const init = () => {
 
 	const getDeployment = async () => {
 		// API Reference: https://vercel.com/docs/rest-api/endpoints/deployments#get-a-deployment-by-id-or-url
-		const endpoint = `/v11/now/deployments/get?url=${ deploymentUrl }`
+		const endpoint = `/v11/now/deployments/get?url=${deploymentUrl}`
 		const url = new URL(endpoint, VercelAPIBase)
 		const res = await fetch(url, options)
 
@@ -117,13 +127,13 @@ const init = () => {
 		deploy,
 		assignAlias,
 		deploymentUrl,
-		getDeployment
+		getDeployment,
 	}
 }
 
 const setEnvironment = async (key, value) => {
 	// API Reference: https://vercel.com/docs/rest-api/endpoints/projects#create-one-or-more-environment-variables
-	const endpoint = `/v10/projects/${ VERCEL_PROJECT_ID }/env`
+	const endpoint = `/v10/projects/${VERCEL_PROJECT_ID}/env`
 
 	const url = new URL(endpoint, VercelAPIBase)
 	const params = new URLSearchParams(url.search.slice(1))
@@ -136,18 +146,22 @@ const setEnvironment = async (key, value) => {
 	const body = {
 		key: key,
 		value: value,
-		target: [ PRODUCTION ? 'production' : 'preview' ],
+		target: [PRODUCTION ? 'production' : 'preview'],
 		type: 'plain',
-		comment: `Set by deploy-to-vercel GitHub Action (${ SHA.substring(0, 7) })`
+		comment: `Set by deploy-to-vercel GitHub Action (${SHA.substring(0, 7)})`,
 	}
 
-	if (GITHUB_DEPLOYMENT_ENV.trim() && GITHUB_DEPLOYMENT_ENV !== 'false' && GITHUB_DEPLOYMENT_ENV !== 'null') {
-		core.debug(`setEnvironment() gitBranch: ${ GITHUB_DEPLOYMENT_ENV }`)
-		body.target = [ 'preview' ]
+	if (
+		GITHUB_DEPLOYMENT_ENV.trim() &&
+		GITHUB_DEPLOYMENT_ENV !== 'false' &&
+		GITHUB_DEPLOYMENT_ENV !== 'null'
+	) {
+		core.debug(`setEnvironment() gitBranch: ${GITHUB_DEPLOYMENT_ENV}`)
+		body.target = ['preview']
 		body.gitBranch = GITHUB_DEPLOYMENT_ENV
 	}
 
-	core.debug(`setEnvironment() body: ${ JSON.stringify(body) }`)
+	core.debug(`setEnvironment() body: ${JSON.stringify(body)}`)
 
 	const envOptions = structuredClone(options)
 	envOptions.method = 'post'
@@ -160,5 +174,5 @@ const setEnvironment = async (key, value) => {
 
 module.exports = {
 	init,
-	setEnvironment
+	setEnvironment,
 }

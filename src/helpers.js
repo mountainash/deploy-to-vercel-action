@@ -1,16 +1,10 @@
-const { StringDecoder } = require('string_decoder')
+const { StringDecoder } = require('node:string_decoder')
 
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 const core = require('@actions/core')
 const { exec } = require('@actions/exec')
 
-const {
-	USER,
-	REPOSITORY,
-	BRANCH,
-	PR_NUMBER,
-	SHA
-} = require('./config')
+const { USER, REPOSITORY, BRANCH, PR_NUMBER, SHA } = require('./config')
 
 const execCmd = async (command, args, cwd) => {
 	const options = {}
@@ -27,7 +21,7 @@ const execCmd = async (command, args, cwd) => {
 		},
 		stderr: (data) => {
 			stderr += stderrDecoder.write(data)
-		}
+		},
 	}
 
 	if (cwd !== '') {
@@ -36,27 +30,28 @@ const execCmd = async (command, args, cwd) => {
 
 	options.silent = false
 
-	core.info(`\u001b[33m▻ EXEC: "${ command } ${ args }"`)
+	core.info(`\u001b[33m▻ EXEC: "${command} ${args}"`)
 
 	try {
 		exitCode = await exec(command, args, options)
-	} catch (ignoreErr) {
+	} catch (_ignoreErr) {
 		exitCode = 1
 	}
 
 	stdout += stdoutDecoder.end()
 	stderr += stderrDecoder.end()
 
-	if (exitCode === 0)
-		return stdout.trim()
+	if (exitCode === 0) return stdout.trim()
 
-	throw new Error(`${ command } ${ args.join(' ') } returned code ${ exitCode } \nSTDOUT: ${ stdout }\nSTDERR: ${ stderr }`)
+	throw new Error(
+		`${command} ${args.join(' ')} returned code ${exitCode} \nSTDOUT: ${stdout}\nSTDERR: ${stderr}`
+	)
 }
 
 const addSchema = (url) => {
 	const regex = /^https?:\/\//
 	if (!regex.test(url)) {
-		return `https://${ url }`
+		return `https://${url}`
 	}
 
 	return url
@@ -71,7 +66,8 @@ const removeSchema = (url) => {
 const urlSafeParameter = (input) => input.replace(/[^a-z0-9~]/gi, '-')
 
 const aliasFormatting = (alias) => {
-	let validAlias = alias.replace('{USER}', urlSafeParameter(USER))
+	let validAlias = alias
+		.replace('{USER}', urlSafeParameter(USER))
 		.replace('{REPO}', urlSafeParameter(REPOSITORY))
 		.replace('{BRANCH}', urlSafeParameter(BRANCH))
 		.replace('{PR}', PR_NUMBER)
@@ -81,17 +77,23 @@ const aliasFormatting = (alias) => {
 	const previewDomainSuffix = '.vercel.app'
 
 	if (validAlias.endsWith(previewDomainSuffix)) {
-		let prefix = validAlias.substring(0, validAlias.indexOf(previewDomainSuffix))
+		let prefix = validAlias.substring(
+			0,
+			validAlias.indexOf(previewDomainSuffix)
+		)
 
 		if (prefix.length >= 60) {
-			core.warning(`⚠️ The alias ${ prefix } exceeds 60 chars in length, truncating using vercel's rules. See https://vercel.com/docs/concepts/deployments/automatic-urls#automatic-branch-urls`)
+			core.warning(
+				`⚠️ The alias ${prefix} exceeds 60 chars in length, truncating using vercel's rules. See https://vercel.com/docs/concepts/deployments/automatic-urls#automatic-branch-urls`
+			)
 			prefix = prefix.substring(0, 55)
-			const uniqueSuffix = crypto.createHash('sha256')
-				.update(`git-${ BRANCH }-${ REPOSITORY }`)
+			const uniqueSuffix = crypto
+				.createHash('sha256')
+				.update(`git-${BRANCH}-${REPOSITORY}`)
 				.digest('hex')
 				.slice(0, 6)
 
-			validAlias = `${ prefix }-${ uniqueSuffix }${ previewDomainSuffix }`
+			validAlias = `${prefix}-${uniqueSuffix}${previewDomainSuffix}`
 		}
 	}
 	return validAlias
@@ -101,5 +103,5 @@ module.exports = {
 	execCmd,
 	addSchema,
 	removeSchema,
-	aliasFormatting
+	aliasFormatting,
 }
