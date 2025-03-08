@@ -43,6 +43,7 @@ jobs:
 
       - name: Make sample config 📄
         run: |
+          mkdir -p $VIRTUALBUILD_PATH
           touch $VIRTUALBUILD_PATH/config.json
           echo "{\"version\": 3}" > $VIRTUALBUILD_PATH/config.json
 
