@@ -4,7 +4,7 @@ const { execCmd, removeSchema } = require('./helpers')
 const {
 	VERCEL_TOKEN,
 	PRODUCTION,
-	VERCEL_SCOPE,
+	VERCEL_SCOPE: importedVercelScope,
 	VERCEL_ORG_ID,
 	VERCEL_PROJECT_ID,
 	SHA,
@@ -19,6 +19,7 @@ const {
 	GITHUB_DEPLOYMENT_ENV
 } = require('./config')
 
+let VERCEL_SCOPE = importedVercelScope
 
 const VercelAPIBase = 'https://api.vercel.com'
 const options = {
@@ -32,14 +33,16 @@ const init = () => {
 	core.exportVariable('VERCEL_ORG_ID', VERCEL_ORG_ID)
 	core.exportVariable('VERCEL_PROJECT_ID', VERCEL_PROJECT_ID)
 
+	if (!VERCEL_SCOPE) {
+		VERCEL_SCOPE = VERCEL_ORG_ID
+	}
+
 	let deploymentUrl
 
 	const deploy = async (commit) => {
 		let commandArguments = [ `--token=${ VERCEL_TOKEN }`, 'deploy' ]
 
-		if (VERCEL_SCOPE) {
-			commandArguments.push(`--scope=${ VERCEL_SCOPE }`)
-		}
+		commandArguments.push(`--scope=${ VERCEL_SCOPE }`)
 
 		if (PRODUCTION) {
 			commandArguments.push('--prod')
@@ -126,12 +129,7 @@ const setEnvironment = async (key, value) => {
 	const params = new URLSearchParams(url.search.slice(1))
 
 	params.set('upsert', 'true')
-
-	if (VERCEL_SCOPE) {
-		params.set('teamId', VERCEL_SCOPE)
-	} else {
-		params.set('teamId', VERCEL_ORG_ID)
-	}
+	params.set('teamId', VERCEL_SCOPE)
 
 	url.search = params.toString()
 
