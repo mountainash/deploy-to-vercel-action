@@ -31824,6 +31824,10 @@ const {
 
 let VERCEL_SCOPE = importedVercelScope
 
+if (!VERCEL_SCOPE) {
+	VERCEL_SCOPE = VERCEL_ORG_ID
+}
+
 const VercelAPIBase = 'https://api.vercel.com'
 const options = {
 	headers: {
@@ -31835,10 +31839,6 @@ const init = () => {
 	core.info('Setting environment variables for Vercel ▲ CLI')
 	core.exportVariable('VERCEL_ORG_ID', VERCEL_ORG_ID)
 	core.exportVariable('VERCEL_PROJECT_ID', VERCEL_PROJECT_ID)
-
-	if (!VERCEL_SCOPE) {
-		VERCEL_SCOPE = VERCEL_ORG_ID
-	}
 
 	let deploymentUrl
 
