@@ -5,9 +5,13 @@
 [Until this fork is merged into the main repo](https://github.com/BetaHuhn/deploy-to-vercel-action/pull/384), you can use the following to get the latest changes:
 
 ```yml
-uses: mountainash/deploy-to-vercel-action@develop
+uses: mountainash/deploy-to-vercel-action@v2.5.0 # Pinned to Release tag
 OR
-uses: mountainash/deploy-to-vercel-action@65a8b653a<< replace with latest commit >>_aef4c111806
+uses: mountainash/deploy-to-vercel-action@latest # Rolling releases
+OR
+uses: mountainash/deploy-to-vercel-action@develop # Development commits
+OR
+uses: mountainash/deploy-to-vercel-action@65a8b653a<< replace with latest commit >>_aef4c111806 # Pinned to a specific commit (best for stability & security)
 ```
 
 ## @mountainash fork changes
@@ -121,7 +125,7 @@ Here are all the inputs [deploy-to-vercel-action](https://github.com/mountainash
 | `PR_LABELS` | Labels which will be added to the pull request once deployed. Set it to false to turn off | **No** | `deployed` |
 | `ALIAS_DOMAINS` | Alias domain(s) to assign to the deployment (more info [below](#custom-domains)) | **No** | N/A |
 | `PR_PREVIEW_DOMAIN` | Custom preview domain for PRs (more info [below](#custom-domains)) | **No** | N/A |
-| `VERCEL_SCOPE` | Execute commands from a different Vercel team or user | **No** | N/A |
+| `VERCEL_SCOPE` | Execute commands from a different Vercel team or user. The value from `VERCEL_ORG_ID` is set if it's not overridden with `VERCEL_SCOPE`  | **No** | `VERCEL_ORG_ID` |
 | `BUILD_ENV` | Provide environment variables to the build step | **No** | N/A |
 | `RUNTIME_ENV` | 🆕 Push environment variables to the Vercel deployment environment (more info [below](#runtime-envvars)) | **No** | N/A |
 | `WORKING_DIRECTORY` | Working directory for the Vercel CLI | **No** | N/A |
