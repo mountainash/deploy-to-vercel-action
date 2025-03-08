@@ -3,11 +3,6 @@ name: Debug Action CI
 on:
   push:
   workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Ref to run the workflow on'
-        required: true
-        default: 'refs/heads/main'
 
 jobs:
   debug:
@@ -23,10 +18,8 @@ jobs:
       VIRTUALBUILD_PATH: .vercel/output
 
     steps:
-      - name: Checkout ${{ github.event.inputs.ref }} 📥
+      - name: Checkout ${{ github.ref_name }} 📥
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -41,7 +34,7 @@ jobs:
 
       - name: Make sample website 📄
         env:
-          LOCAL_REF: ${{ github.event.inputs.ref }}
+          LOCAL_REF: ${{ github.ref_name }}
           BUILD_DIR: $VIRTUALBUILD_PATH/static
         run: mkdir -p $BUILD_DIR/ && touch $BUILD_DIR/index.html && echo "LOCAL_REF=$LOCAL_REF" > $BUILD_DIR/index.html
 
